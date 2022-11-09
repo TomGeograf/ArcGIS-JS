@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
+    <title>WMS
+    </title>
+    <style>
+        html,
+        body,
+        #viewDiv {
+            padding: 0;
+            margin: 0;
+            height: 100%;
+            width: 100%;
+        }
+    </style>
+
+    <link rel="stylesheet" href="https://js.arcgis.com/4.24/esri/themes/light/main.css" />
+    <script src="https://js.arcgis.com/4.24/"></script>
+
+    <script>
+        require(["esri/Map", "esri/views/MapView", "esri/widgets/LayerList", "esri/layers/WMSLayer", "esri/layers/TileLayer", "esri/geometry/Point", "esri/geometry/SpatialReference"], function (Map, MapView, LayerList, WMSLayer, TileLayer, Point, SpatialReference) {
+            var baselayer = new TileLayer({
+                url: "https://ags.cuzk.cz/arcgis/rest/services/zm/MapServer"
+            });
+            var map = new Map({
+                basemap: {
+                    baseLayers: baselayer
+                }
+            });
+
+            var view = new MapView({
+                container: "viewDiv",
+                map: map,
+                zoom: 4
+            });
+            view.when(function () {
+                var layer = new WMSLayer({
+                    url: "https://ags.cuzk.cz/arcgis/services/BodovaPole/MapServer/WmsServer?",
+                    imageFormat: "image/png"
+                });
+                layer.load().then(function (loadedLayer) {
+                    view.map.layers.add(loadedLayer);
+                    var point = new Point({
+                        x: -593905,
+                        y: -1173941,
+                        spatialReference: new SpatialReference({ "wkid": 102067, "latestWkid": 5514 })
+                    });
+                    view.goTo({
+                        target: point,
+                        zoom: 3
+                    });
+                });
+
+                var layerlist = new LayerList({
+                    view: view
+                });
+                view.ui.add(layerlist, {
+                    position: "top-right"
+                });
+            });
+        });
+    </script>
+</head>
+
+<body>
+    <div id="viewDiv"></div>
+</body>
+
+</html>
