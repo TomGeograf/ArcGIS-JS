@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
+    <title>VectorTileLayer</title>
+    <style>
+        html,
+        body,
+        #viewDiv {
+            padding: 0;
+            margin: 0;
+            height: 100%;
+            width: 100%;
+        }
+    </style>
+
+    <link rel="stylesheet" href="https://js.arcgis.com/4.29/esri/themes/dark/main.css" />
+    <script src="https://js.arcgis.com/4.29/"></script>
+
+    <script>
+        require(["esri/Map", "esri/views/MapView", "esri/layers/VectorTileLayer", "esri/layers/TileLayer", "esri/geometry/Point", "esri/geometry/SpatialReference"], (Map, MapView, VectorTileLayer, TileLayer, Point, SpatialReference) => {
+            let view = new MapView({
+                container: "viewDiv",
+                map: new Map({
+                    basemap: {
+                        baseLayers: new TileLayer({
+                            url: "https://ags.cuzk.cz/arcgis1/rest/services/ORTOFOTO/MapServer"
+                        })
+                    }
+                })
+            });
+            view.when(() => {
+                let v = new VectorTileLayer({
+                    url: "https://ags.cuzk.cz/arcgis2/rest/services/Hosted/ZABAGED_POLOHOPIS/VectorTileServer"
+                });
+                view.map.layers.add(v);
+
+                view.goTo({
+                    target: new Point({
+                        x: -685886.86,
+                        y: -973913.38,
+                        spatialReference: new SpatialReference({ 
+                            wkid: 102067,
+                            latestWkid: 5514
+                        })
+                    }),
+                    zoom: 10
+                });
+            });
+        });
+    </script>
+</head>
+<body>
+    <div id="viewDiv"></div>
+</body>
+</html>
